@@ -16,7 +16,7 @@ public class CinemaRepository {
         SEATS = new ArrayList<>();
         for (int row = 1; row <= ROWS_NUMBER; row++) {
             for (int column = 1; column <= COLUMN_NUMBER; column++) {
-                Seat seat = new Seat(row, column);
+                Seat seat = new Seat(row, column, row <= 4 ? 10 : 8, false);
                 SEATS.add(seat);
             }
         }

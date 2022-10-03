@@ -223,6 +223,151 @@ files:
         };
     }
   learner_created: false
+- name: src/cinema/domains/CinemaRoom.java
+  visible: true
+  text: |
+    package cinema.domains;
+
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+
+    import java.util.List;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public class CinemaRoom {
+        private int totalRows;
+        private int totalColumns;
+        private List<Seat> availableSeats;
+    }
+  learner_created: true
+- name: src/cinema/controller/CinemaController.java
+  visible: true
+  text: |
+    package cinema.controller;
+
+    import cinema.domains.CinemaRoom;
+    import cinema.service.CinemaService;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.web.bind.annotation.GetMapping;
+    import org.springframework.web.bind.annotation.RestController;
+
+    @RestController
+    public class CinemaController {
+
+        private final CinemaService cinemaService;
+
+        @Autowired
+        public CinemaController(final CinemaService cinemaService) {
+            this.cinemaService = cinemaService;
+        }
+
+        @GetMapping("/seats")
+        public CinemaRoom getCinemaRoomInfo() {
+            return cinemaService.getCinemaRoomInfo();
+        }
+
+    }
+  learner_created: true
+- name: src/cinema/service/CinemaService.java
+  visible: true
+  text: |
+    package cinema.service;
+
+    import cinema.domains.CinemaRoom;
+    import cinema.repository.CinemaRepository;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.stereotype.Service;
+
+    @Service
+    public class CinemaService {
+
+        private final CinemaRepository cinemaRepository;
+
+        @Autowired
+        public CinemaService(final CinemaRepository cinemaRepository) {
+            this.cinemaRepository = cinemaRepository;
+        }
+
+        public CinemaRoom getCinemaRoomInfo() {
+            return new CinemaRoom(
+                    cinemaRepository.getRowsNumber(),
+                    cinemaRepository.getColumnNumber(),
+                    cinemaRepository.getSeats()
+            );
+        }
+
+    }
+  learner_created: true
+- name: src/cinema/domains/Seat.java
+  visible: true
+  text: |
+    package cinema.domains;
+
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+    import lombok.Setter;
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public class Seat {
+        private int row;
+        private int column;
+    }
+  learner_created: true
+- name: src/cinema/repository/CinemaRepository.java
+  visible: true
+  text: |
+    package cinema.repository;
+
+    import cinema.domains.Seat;
+    import org.springframework.stereotype.Repository;
+
+    import java.util.ArrayList;
+    import java.util.List;
+
+    @Repository
+    public class CinemaRepository {
+        private static final int ROWS_NUMBER = 9;
+        private static final int COLUMN_NUMBER = 9;
+        private static final List<Seat> SEATS;
+
+        static  {
+            SEATS = new ArrayList<>();
+            for (int row = 1; row <= ROWS_NUMBER; row++) {
+                for (int column = 1; column <= COLUMN_NUMBER; column++) {
+                    Seat seat = new Seat(row, column);
+                    SEATS.add(seat);
+                }
+            }
+        }
+
+        public int getRowsNumber() {
+            return ROWS_NUMBER;
+        }
+
+        public int getColumnNumber() {
+            return COLUMN_NUMBER;
+        }
+
+        public List<Seat> getSeats() {
+            return SEATS;
+        }
+    }
+  learner_created: true
+- name: src/cinema/domains/dto/SeatDTO.java
+  visible: true
+  learner_created: true
+- name: src/cinema/utils/Mapper.java
+  visible: true
+  learner_created: true
+- name: src/cinema/domains/dto/CinemaRoomDTO.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/13376#comment
 status: Unchecked
 record: -1

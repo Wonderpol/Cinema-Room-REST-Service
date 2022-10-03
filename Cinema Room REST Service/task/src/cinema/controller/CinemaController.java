@@ -1,7 +1,8 @@
 package cinema.controller;
 
-import cinema.domains.CinemaRoom;
+import cinema.domains.dto.CinemaRoomDTO;
 import cinema.service.CinemaService;
+import cinema.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,15 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class CinemaController {
 
     private final CinemaService cinemaService;
+    private Mapper mapper;
 
     @Autowired
-    public CinemaController(final CinemaService cinemaService) {
+    public CinemaController(final CinemaService cinemaService, final Mapper mapper) {
         this.cinemaService = cinemaService;
+        this.mapper = mapper;
     }
 
     @GetMapping("/seats")
-    public CinemaRoom getCinemaRoomInfo() {
-        return cinemaService.getCinemaRoomInfo();
+    public CinemaRoomDTO getCinemaRoomInfo() {
+       return mapper.toDto(cinemaService.getCinemaRoomInfo());
     }
 
 }
