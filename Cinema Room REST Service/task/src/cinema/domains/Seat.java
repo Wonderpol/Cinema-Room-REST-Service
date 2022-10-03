@@ -11,5 +11,4 @@ import lombok.Setter;
 public class Seat {
     private int row;
     private int column;
-    private boolean isAvailable;
 }
