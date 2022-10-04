@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CinemaController {
 
     private final CinemaService cinemaService;
-    private Mapper mapper;
+    private final Mapper mapper;
 
     @Autowired
     public CinemaController(final CinemaService cinemaService, final Mapper mapper) {
