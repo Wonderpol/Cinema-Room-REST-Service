@@ -1,4 +1,4 @@
-package cinema.utils.exceptions;
+package cinema.exceptions;
 
 public class SeatDoesNotExistException extends Exception {
     public SeatDoesNotExistException() {

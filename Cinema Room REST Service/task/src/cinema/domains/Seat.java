@@ -1,9 +1,6 @@
 package cinema.domains;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,5 +11,6 @@ public class Seat {
     @NonNull
     private int column;
     private int price;
+    @Setter
     private boolean isAvailable;
 }

@@ -16,7 +16,7 @@ public class CinemaRepository {
         SEATS = new ArrayList<>();
         for (int row = 1; row <= ROWS_NUMBER; row++) {
             for (int column = 1; column <= COLUMN_NUMBER; column++) {
-                Seat seat = new Seat(row, column, row <= 4 ? 10 : 8, false);
+                Seat seat = new Seat(row, column, row <= 4 ? 10 : 8, true);
                 SEATS.add(seat);
             }
         }
@@ -32,5 +32,8 @@ public class CinemaRepository {
 
     public List<Seat> getSeats() {
         return SEATS;
+    }
+    public void updateSeatAvailability(Seat seat, Seat bookedSeat) {
+        SEATS.set(SEATS.indexOf(seat), bookedSeat);
     }
 }

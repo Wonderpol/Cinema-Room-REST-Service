@@ -368,12 +368,21 @@ files:
 - name: src/cinema/domains/dto/CinemaRoomDTO.java
   visible: true
   learner_created: true
-- name: src/cinema/utils/exceptions/TicketAlreadyPurchasedException.java
+- name: src/cinema/exceptions/TicketAlreadyPurchasedException.java
   visible: true
   learner_created: true
-- name: src/cinema/utils/exceptions/SeatDoesNotExistException.java
+- name: src/cinema/exceptions/SeatDoesNotExistException.java
+  visible: true
+  learner_created: true
+- name: src/cinema/exceptions/exceptionsHandler/ControllerExceptionHandler.java
+  visible: true
+  learner_created: true
+- name: src/cinema/domains/ErrorResponse.java
   visible: true
   learner_created: true
 feedback_link: https://hyperskill.org/learn/step/13376#comment
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Tue, 04 Oct 2022 20:09:53 UTC
+record: 2

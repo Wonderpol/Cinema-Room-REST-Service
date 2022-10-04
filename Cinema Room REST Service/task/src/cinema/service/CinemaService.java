@@ -4,11 +4,13 @@ import cinema.domains.CinemaRoom;
 import cinema.domains.Seat;
 import cinema.domains.dto.SeatDTO;
 import cinema.repository.CinemaRepository;
-import cinema.utils.exceptions.SeatDoesNotExistException;
-import cinema.utils.exceptions.TicketAlreadyPurchasedException;
+import cinema.exceptions.SeatDoesNotExistException;
+import cinema.exceptions.TicketAlreadyPurchasedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cinema.utils.Mapper;
+
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,31 +29,35 @@ public class CinemaService {
         return new CinemaRoom(
                 cinemaRepository.getRowsNumber(),
                 cinemaRepository.getColumnNumber(),
-                cinemaRepository.getSeats()
+                cinemaRepository.getSeats().stream().filter(Seat::isAvailable).collect(Collectors.toList())
         );
     }
 
-    public SeatDTO purchaseSeat(SeatDTO seat) throws TicketAlreadyPurchasedException, SeatDoesNotExistException {
+    public SeatDTO purchaseSeat(Seat seat) throws TicketAlreadyPurchasedException, SeatDoesNotExistException {
 
-        if (!ifSeatExists(seat)) {
-            throw new SeatDoesNotExistException("dsa");
+        if (ifSeatDoesNotExists(seat)) {
+            throw new SeatDoesNotExistException("The number of a row or a column is out of bounds!");
         }
 
-        return cinemaRepository.getSeats()
+        Seat bookedSeat =  cinemaRepository.getSeats()
                 .stream()
                 .filter(s -> s.getRow() == seat.getRow()
                         && s.getColumn() == seat.getColumn()
                         && s.isAvailable())
+
                 .findAny()
-                .map(mapper::toDto)
                 .orElseThrow(() -> new TicketAlreadyPurchasedException("The ticket has been already purchased!"));
+
+        bookedSeat.setAvailable(false);
+
+        return mapper.toDto(bookedSeat);
     }
 
-    private boolean ifSeatExists(SeatDTO seat) {
+    private boolean ifSeatDoesNotExists(Seat seat) {
         return cinemaRepository.getSeats()
                 .stream()
-                .filter(s -> s.getRow() == s.getRow() && s.getColumn() == s.getColumn())
-                .findFirst()
+                .filter(s -> s.getRow() == seat.getRow() && s.getColumn() == seat.getColumn())
+                .findAny()
                 .isEmpty();
     }
 }
