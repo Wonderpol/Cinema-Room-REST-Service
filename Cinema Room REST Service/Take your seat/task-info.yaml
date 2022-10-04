@@ -368,6 +368,12 @@ files:
 - name: src/cinema/domains/dto/CinemaRoomDTO.java
   visible: true
   learner_created: true
+- name: src/cinema/utils/exceptions/TicketAlreadyPurchasedException.java
+  visible: true
+  learner_created: true
+- name: src/cinema/utils/exceptions/SeatDoesNotExistException.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/13376#comment
 status: Unchecked
 record: -1
