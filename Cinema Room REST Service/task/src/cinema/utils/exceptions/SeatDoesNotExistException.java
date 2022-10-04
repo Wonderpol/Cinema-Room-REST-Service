@@ -5,7 +5,7 @@ public class SeatDoesNotExistException extends Exception {
         super();
     }
 
-    public SeatDoesNotExistException(final Throwable cause) {
-        super(cause);
+    public SeatDoesNotExistException(final String message) {
+        super(message);
     }
 }

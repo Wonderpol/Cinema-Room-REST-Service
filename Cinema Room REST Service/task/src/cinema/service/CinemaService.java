@@ -4,6 +4,7 @@ import cinema.domains.CinemaRoom;
 import cinema.domains.Seat;
 import cinema.domains.dto.SeatDTO;
 import cinema.repository.CinemaRepository;
+import cinema.utils.exceptions.SeatDoesNotExistException;
 import cinema.utils.exceptions.TicketAlreadyPurchasedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,11 @@ public class CinemaService {
         );
     }
 
-    public SeatDTO purchaseSeat(SeatDTO seat) throws TicketAlreadyPurchasedException {
+    public SeatDTO purchaseSeat(SeatDTO seat) throws TicketAlreadyPurchasedException, SeatDoesNotExistException {
+
+        if (!ifSeatExists(seat)) {
+            throw new SeatDoesNotExistException("dsa");
+        }
 
         return cinemaRepository.getSeats()
                 .stream()
@@ -39,7 +44,14 @@ public class CinemaService {
                         && s.isAvailable())
                 .findAny()
                 .map(mapper::toDto)
-                .orElseThrow(TicketAlreadyPurchasedException::new);
+                .orElseThrow(() -> new TicketAlreadyPurchasedException("The ticket has been already purchased!"));
     }
 
+    private boolean ifSeatExists(SeatDTO seat) {
+        return cinemaRepository.getSeats()
+                .stream()
+                .filter(s -> s.getRow() == s.getRow() && s.getColumn() == s.getColumn())
+                .findFirst()
+                .isEmpty();
+    }
 }
