@@ -41,9 +41,6 @@ public class CinemaRepository {
     public List<Seat> getSeats() {
         return SEATS;
     }
-    public void updateSeatAvailability(Seat seat, Seat bookedSeat) {
-        SEATS.set(SEATS.indexOf(seat), bookedSeat);
-    }
 
     public Reservation saveReservation(SeatDTO seat) {
         final Reservation reservation = new Reservation(new Token().toString(), seat);

@@ -22,12 +22,7 @@ public class StatisticsRepository {
     }
 
     public int getNumberOfAvailableSeats() {
-        return cinemaRepository
-                .getSeats()
-                .stream()
-                .filter(Seat::isAvailable)
-                .toList()
-                .size();
+        return cinemaRepository.getSeats().size() - getNumberOfPurchasedTickets();
     }
 
     public int getNumberOfPurchasedTickets() {
