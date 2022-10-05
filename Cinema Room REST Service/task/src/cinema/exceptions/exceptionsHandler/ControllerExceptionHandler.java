@@ -1,15 +1,16 @@
 package cinema.exceptions.exceptionsHandler;
 
-import cinema.domains.ErrorResponse;
+import cinema.domains.response.ErrorResponse;
 import cinema.exceptions.SeatDoesNotExistException;
 import cinema.exceptions.TicketAlreadyPurchasedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class ControllerExceptionHandler {
+public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {SeatDoesNotExistException.class})
     public ResponseEntity<ErrorResponse> seatDoesNotExistExceptionHandler(Exception ex) {

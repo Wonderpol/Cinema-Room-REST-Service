@@ -1,4 +1,4 @@
-package cinema.domains;
+package cinema.domains.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

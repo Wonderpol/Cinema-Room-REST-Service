@@ -488,20 +488,6 @@ files:
         }
     }
   learner_created: true
-- name: src/cinema/domains/ErrorResponse.java
-  visible: true
-  text: |
-    package cinema.domains;
-
-    import lombok.AllArgsConstructor;
-    import lombok.Getter;
-
-    @Getter
-    @AllArgsConstructor
-    public class ErrorResponse {
-        private String error;
-    }
-  learner_created: true
 - name: src/cinema/exceptions/SeatDoesNotExistException.java
   visible: true
   text: |
@@ -625,6 +611,26 @@ files:
                     .isEmpty();
         }
     }
+  learner_created: true
+- name: src/cinema/domains/response/ErrorResponse.java
+  visible: true
+  text: |
+    package cinema.domains;
+
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+
+    @Getter
+    @AllArgsConstructor
+    public class ErrorResponse {
+        private String error;
+    }
+  learner_created: true
+- name: src/cinema/domains/response/TicketPurchaseResponse.java
+  visible: true
+  learner_created: true
+- name: src/cinema/exceptions/ExceptionsEnum.java
+  visible: true
   learner_created: true
 feedback_link: https://hyperskill.org/learn/step/13377#comment
 status: Unchecked
