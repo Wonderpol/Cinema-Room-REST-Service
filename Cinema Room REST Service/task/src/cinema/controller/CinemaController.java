@@ -8,16 +8,12 @@ import cinema.domains.dto.SeatDTO;
 import cinema.exceptions.WrongTokenException;
 import cinema.service.CinemaService;
 import cinema.utils.Mapper;
-import cinema.exceptions.SeatDoesNotExistException;
-import cinema.exceptions.TicketAlreadyPurchasedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 public class CinemaController {

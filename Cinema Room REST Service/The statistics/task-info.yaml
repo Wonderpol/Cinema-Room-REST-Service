@@ -390,6 +390,487 @@ files:
         };
     }
   learner_created: false
+- name: src/cinema/domains/Reservation.java
+  visible: true
+  text: |
+    package cinema.domains;
+
+    import cinema.domains.dto.SeatDTO;
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+    import lombok.Setter;
+
+    import java.util.UUID;
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public class Reservation {
+        private String token;
+        private SeatDTO ticket;
+    }
+  learner_created: true
+- name: src/cinema/domains/response/ErrorResponse.java
+  visible: true
+  text: |
+    package cinema.domains.response;
+
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+
+    @Getter
+    @AllArgsConstructor
+    public class ErrorResponse {
+        private String error;
+    }
+  learner_created: true
+- name: src/cinema/exceptions/exceptionsHandler/ControllerExceptionHandler.java
+  visible: true
+  text: |
+    package cinema.exceptions.exceptionsHandler;
+
+    import cinema.domains.response.ErrorResponse;
+    import cinema.exceptions.SeatDoesNotExistException;
+    import cinema.exceptions.TicketAlreadyPurchasedException;
+    import cinema.exceptions.WrongTokenException;
+    import org.springframework.http.HttpStatus;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.annotation.ControllerAdvice;
+    import org.springframework.web.bind.annotation.ExceptionHandler;
+    import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+    @ControllerAdvice
+    public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
+
+        @ExceptionHandler(value = {SeatDoesNotExistException.class})
+        public ResponseEntity<ErrorResponse> seatDoesNotExistExceptionHandler(Exception ex) {
+            final ErrorResponse errorResponse = new ErrorResponse(
+                    ex.getMessage()
+            );
+
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        @ExceptionHandler(value = {TicketAlreadyPurchasedException.class})
+        public ResponseEntity<ErrorResponse> ticketAlreadyPurchasedException(Exception ex) {
+            final ErrorResponse errorResponse = new ErrorResponse(
+                    ex.getMessage()
+            );
+
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        @ExceptionHandler(value = {WrongTokenException.class})
+        public ResponseEntity<ErrorResponse> wrongTokenException(Exception ex) {
+            final ErrorResponse errorResponse = new ErrorResponse(
+                    ex.getMessage()
+            );
+
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        @ExceptionHandler(value = Exception.class)
+        public ResponseEntity<ErrorResponse> globalBaseExceptionHandler(Exception exception) {
+            final ErrorResponse errorResponse = new ErrorResponse(
+                    exception.getMessage()
+            );
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+  learner_created: true
+- name: src/cinema/domains/Token.java
+  visible: true
+  text: |
+    package cinema.domains;
+
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+
+    import java.util.UUID;
+
+    @Getter
+    public class Token {
+        private UUID token;
+
+        public Token() {
+            this.token = UUID.randomUUID();
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(token);
+        }
+    }
+  learner_created: true
+- name: src/cinema/utils/Mapper.java
+  visible: true
+  text: |
+    package cinema.utils;
+
+    import cinema.domains.CinemaRoom;
+    import cinema.domains.Seat;
+    import cinema.domains.dto.CinemaRoomDTO;
+    import cinema.domains.dto.SeatDTO;
+    import org.springframework.stereotype.Component;
+
+    import java.util.List;
+
+    @Component
+    public class Mapper {
+        public SeatDTO toDto(Seat seat) {
+            return new SeatDTO(seat.getRow(), seat.getColumn(), seat.getPrice());
+        }
+
+        public CinemaRoomDTO toDto(CinemaRoom cinemaRoom) {
+            List<SeatDTO> seats = cinemaRoom.getAvailableSeats()
+                    .stream()
+                    .map(this::toDto)
+                    .toList();
+
+            return new CinemaRoomDTO(cinemaRoom.getTotalRows(), cinemaRoom.getTotalColumns(), seats);
+        }
+
+    }
+  learner_created: true
+- name: src/cinema/exceptions/WrongTokenException.java
+  visible: true
+  text: |
+    package cinema.exceptions;
+
+    public class WrongTokenException extends Exception {
+        public WrongTokenException() {
+            super();
+        }
+
+        public WrongTokenException(final String message) {
+            super(message);
+        }
+
+        public WrongTokenException(final Throwable cause) {
+            super(cause);
+        }
+    }
+  learner_created: true
+- name: src/cinema/domains/Seat.java
+  visible: true
+  text: |
+    package cinema.domains;
+
+    import lombok.*;
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public class Seat {
+        @NonNull
+        private int row;
+        @NonNull
+        private int column;
+        private int price;
+        @Setter
+        private boolean isAvailable;
+    }
+  learner_created: true
+- name: src/cinema/repository/CinemaRepository.java
+  visible: true
+  text: |
+    package cinema.repository;
+
+    import cinema.domains.Reservation;
+    import cinema.domains.Seat;
+    import cinema.domains.Token;
+    import cinema.domains.dto.SeatDTO;
+    import cinema.exceptions.WrongTokenException;
+    import org.springframework.stereotype.Repository;
+
+    import java.util.ArrayList;
+    import java.util.List;
+    import java.util.Map;
+    import java.util.UUID;
+
+    @Repository
+    public class CinemaRepository {
+        private static final int ROWS_NUMBER = 9;
+        private static final int COLUMN_NUMBER = 9;
+        private static final List<Seat> SEATS;
+        private static final List<Reservation> RESERVATIONS;
+
+        static  {
+            SEATS = new ArrayList<>();
+            RESERVATIONS = new ArrayList<>();
+            for (int row = 1; row <= ROWS_NUMBER; row++) {
+                for (int column = 1; column <= COLUMN_NUMBER; column++) {
+                    Seat seat = new Seat(row, column, row <= 4 ? 10 : 8, true);
+                    SEATS.add(seat);
+                }
+            }
+        }
+
+        public int getRowsNumber() {
+            return ROWS_NUMBER;
+        }
+
+        public int getColumnNumber() {
+            return COLUMN_NUMBER;
+        }
+
+        public List<Seat> getSeats() {
+            return SEATS;
+        }
+        public void updateSeatAvailability(Seat seat, Seat bookedSeat) {
+            SEATS.set(SEATS.indexOf(seat), bookedSeat);
+        }
+
+        public Reservation saveReservation(SeatDTO seat) {
+            final Reservation reservation = new Reservation(new Token().toString(), seat);
+            RESERVATIONS.add(reservation);
+            return reservation;
+        }
+
+        public List<Reservation> getReservations() {
+            return RESERVATIONS;
+        }
+
+        public Reservation deleteReservationByToken(Token token) throws IllegalArgumentException{
+            final Reservation reservation = RESERVATIONS
+                            .stream()
+                            .filter(r -> r.getToken().equals(token.getToken().toString()))
+                            .findAny()
+                            .orElseThrow(IllegalArgumentException::new);
+
+            RESERVATIONS.remove(reservation);
+
+            return reservation;
+        }
+    }
+  learner_created: true
+- name: src/cinema/domains/dto/CinemaRoomDTO.java
+  visible: true
+  text: |
+    package cinema.domains.dto;
+
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+
+    import java.util.List;
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public class CinemaRoomDTO {
+        private int totalRows;
+        private int totalColumns;
+        private List<SeatDTO> availableSeats;
+    }
+  learner_created: true
+- name: src/cinema/domains/CinemaRoom.java
+  visible: true
+  text: |
+    package cinema.domains;
+
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+
+    import java.util.List;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public class CinemaRoom {
+        private int totalRows;
+        private int totalColumns;
+        private List<Seat> availableSeats;
+    }
+  learner_created: true
+- name: src/cinema/domains/dto/SeatDTO.java
+  visible: true
+  text: |
+    package cinema.domains.dto;
+
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public class SeatDTO {
+        private int row;
+        private int column;
+        private int price;
+    }
+  learner_created: true
+- name: src/cinema/exceptions/TicketAlreadyPurchasedException.java
+  visible: true
+  text: |
+    package cinema.exceptions;
+
+    public class TicketAlreadyPurchasedException extends Exception {
+
+        public TicketAlreadyPurchasedException() {
+            super();
+        }
+
+        public TicketAlreadyPurchasedException(final String message) {
+            super(message);
+        }
+    }
+  learner_created: true
+- name: src/cinema/exceptions/SeatDoesNotExistException.java
+  visible: true
+  text: |
+    package cinema.exceptions;
+
+    public class SeatDoesNotExistException extends Exception {
+        public SeatDoesNotExistException() {
+            super();
+        }
+
+        public SeatDoesNotExistException(final String message) {
+            super(message);
+        }
+    }
+  learner_created: true
+- name: src/cinema/controller/CinemaController.java
+  visible: true
+  text: |
+    package cinema.controller;
+
+    import cinema.domains.Reservation;
+    import cinema.domains.Seat;
+    import cinema.domains.Token;
+    import cinema.domains.dto.CinemaRoomDTO;
+    import cinema.domains.dto.SeatDTO;
+    import cinema.exceptions.WrongTokenException;
+    import cinema.service.CinemaService;
+    import cinema.utils.Mapper;
+    import cinema.exceptions.SeatDoesNotExistException;
+    import cinema.exceptions.TicketAlreadyPurchasedException;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.http.HttpStatus;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.annotation.*;
+    import org.springframework.web.server.ResponseStatusException;
+
+    import java.util.Map;
+    import java.util.UUID;
+
+    @RestController
+    public class CinemaController {
+
+        private final CinemaService cinemaService;
+        private final Mapper mapper;
+
+        @Autowired
+        public CinemaController(final CinemaService cinemaService, final Mapper mapper) {
+            this.cinemaService = cinemaService;
+            this.mapper = mapper;
+        }
+
+        @GetMapping("/seats")
+        public CinemaRoomDTO getCinemaRoomInfo() {
+           return mapper.toDto(cinemaService.getCinemaRoomInfo());
+        }
+
+        @PostMapping("/purchase")
+        public ResponseEntity<Reservation> purchaseSeat(@RequestBody Seat seat) throws Exception {
+            return new ResponseEntity<>(cinemaService.purchaseSeat(seat), HttpStatus.OK);
+        }
+
+        @PostMapping("/return")
+        public ResponseEntity<Map<String, SeatDTO>> returnTicket(@RequestBody Token token) throws WrongTokenException {
+            return new ResponseEntity<>(cinemaService.returnTicket(token), HttpStatus.OK);
+        }
+
+    }
+  learner_created: true
+- name: src/cinema/service/CinemaService.java
+  visible: true
+  text: |+
+    package cinema.service;
+
+    import cinema.domains.CinemaRoom;
+    import cinema.domains.Reservation;
+    import cinema.domains.Seat;
+    import cinema.domains.Token;
+    import cinema.domains.dto.SeatDTO;
+    import cinema.exceptions.WrongTokenException;
+    import cinema.repository.CinemaRepository;
+    import cinema.exceptions.SeatDoesNotExistException;
+    import cinema.exceptions.TicketAlreadyPurchasedException;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.stereotype.Service;
+    import cinema.utils.Mapper;
+
+    import java.util.Map;
+    import java.util.UUID;
+    import java.util.stream.Collectors;
+
+    @Service
+    public class CinemaService {
+
+        private final CinemaRepository cinemaRepository;
+        private final Mapper mapper;
+
+        @Autowired
+        public CinemaService(final CinemaRepository cinemaRepository, final Mapper mapper) {
+            this.cinemaRepository = cinemaRepository;
+            this.mapper = mapper;
+        }
+
+        public CinemaRoom getCinemaRoomInfo() {
+            return new CinemaRoom(
+                    cinemaRepository.getRowsNumber(),
+                    cinemaRepository.getColumnNumber(),
+                    cinemaRepository.getSeats().stream().filter(Seat::isAvailable).collect(Collectors.toList())
+            );
+        }
+
+        public Reservation purchaseSeat(Seat seat) throws TicketAlreadyPurchasedException, SeatDoesNotExistException {
+
+            if (ifSeatDoesNotExists(seat)) {
+                throw new SeatDoesNotExistException("The number of a row or a column is out of bounds!");
+            }
+
+            Seat bookedSeat =  cinemaRepository.getSeats()
+                    .stream()
+                    .filter(s -> s.getRow() == seat.getRow()
+                            && s.getColumn() == seat.getColumn()
+                            && s.isAvailable())
+
+                    .findAny()
+                    .orElseThrow(() -> new TicketAlreadyPurchasedException("The ticket has been already purchased!"));
+
+            bookedSeat.setAvailable(false);
+
+            return cinemaRepository.saveReservation(mapper.toDto(bookedSeat));
+        }
+
+        public Map<String, SeatDTO> returnTicket(Token token) throws WrongTokenException {
+            Reservation reservation;
+            try {
+                reservation = cinemaRepository.deleteReservationByToken(token);
+            } catch (IllegalArgumentException ex) {
+                throw new WrongTokenException("Wrong token!");
+            }
+            return Map.of("returned_ticket", reservation.getTicket());
+        }
+
+        private boolean ifSeatDoesNotExists(Seat seat) {
+            return cinemaRepository.getSeats()
+                    .stream()
+                    .filter(s -> s.getRow() == seat.getRow() && s.getColumn() == seat.getColumn())
+                    .findAny()
+                    .isEmpty();
+        }
+    }
+
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/13378#comment
 status: Unchecked
 record: -1
