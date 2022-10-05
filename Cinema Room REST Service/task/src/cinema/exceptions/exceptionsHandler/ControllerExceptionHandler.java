@@ -1,6 +1,7 @@
 package cinema.exceptions.exceptionsHandler;
 
 import cinema.domains.response.ErrorResponse;
+import cinema.exceptions.InvalidPasswordException;
 import cinema.exceptions.SeatDoesNotExistException;
 import cinema.exceptions.TicketAlreadyPurchasedException;
 import cinema.exceptions.WrongTokenException;
@@ -38,6 +39,15 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         );
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {InvalidPasswordException.class})
+    public ResponseEntity<ErrorResponse> invalidPasswordException(Exception ex) {
+        final ErrorResponse errorResponse = new ErrorResponse(
+                ex.getMessage()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(value = Exception.class)
