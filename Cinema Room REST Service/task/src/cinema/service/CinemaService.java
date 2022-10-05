@@ -3,7 +3,9 @@ package cinema.service;
 import cinema.domains.CinemaRoom;
 import cinema.domains.Reservation;
 import cinema.domains.Seat;
+import cinema.domains.Token;
 import cinema.domains.dto.SeatDTO;
+import cinema.exceptions.WrongTokenException;
 import cinema.repository.CinemaRepository;
 import cinema.exceptions.SeatDoesNotExistException;
 import cinema.exceptions.TicketAlreadyPurchasedException;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cinema.utils.Mapper;
 
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +55,16 @@ public class CinemaService {
         bookedSeat.setAvailable(false);
 
         return cinemaRepository.saveReservation(mapper.toDto(bookedSeat));
+    }
+
+    public Map<String, SeatDTO> returnTicket(Token token) throws WrongTokenException {
+        Reservation reservation;
+        try {
+            reservation = cinemaRepository.deleteReservationByToken(token);
+        } catch (IllegalArgumentException ex) {
+            throw new WrongTokenException("Wrong token!");
+        }
+        return Map.of("returned_ticket", reservation.getTicket());
     }
 
     private boolean ifSeatDoesNotExists(Seat seat) {

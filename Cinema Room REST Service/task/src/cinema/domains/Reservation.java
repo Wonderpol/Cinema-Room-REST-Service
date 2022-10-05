@@ -13,6 +13,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Reservation {
-    private UUID token;
-    private SeatDTO seat;
+    private String token;
+    private SeatDTO ticket;
 }

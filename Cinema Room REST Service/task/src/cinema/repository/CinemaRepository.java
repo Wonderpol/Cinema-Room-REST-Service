@@ -2,11 +2,14 @@ package cinema.repository;
 
 import cinema.domains.Reservation;
 import cinema.domains.Seat;
+import cinema.domains.Token;
 import cinema.domains.dto.SeatDTO;
+import cinema.exceptions.WrongTokenException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Repository
@@ -43,9 +46,24 @@ public class CinemaRepository {
     }
 
     public Reservation saveReservation(SeatDTO seat) {
-        final Reservation reservation = new Reservation(UUID.randomUUID(), seat);
+        final Reservation reservation = new Reservation(new Token().toString(), seat);
         RESERVATIONS.add(reservation);
         return reservation;
     }
 
+    public List<Reservation> getReservations() {
+        return RESERVATIONS;
+    }
+
+    public Reservation deleteReservationByToken(Token token) throws IllegalArgumentException{
+        final Reservation reservation = RESERVATIONS
+                        .stream()
+                        .filter(r -> r.getToken().equals(token.getToken().toString()))
+                        .findAny()
+                        .orElseThrow(IllegalArgumentException::new);
+
+        RESERVATIONS.remove(reservation);
+
+        return reservation;
+    }
 }

@@ -3,6 +3,7 @@ package cinema.exceptions.exceptionsHandler;
 import cinema.domains.response.ErrorResponse;
 import cinema.exceptions.SeatDoesNotExistException;
 import cinema.exceptions.TicketAlreadyPurchasedException;
+import cinema.exceptions.WrongTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,6 +24,15 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {TicketAlreadyPurchasedException.class})
     public ResponseEntity<ErrorResponse> ticketAlreadyPurchasedException(Exception ex) {
+        final ErrorResponse errorResponse = new ErrorResponse(
+                ex.getMessage()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {WrongTokenException.class})
+    public ResponseEntity<ErrorResponse> wrongTokenException(Exception ex) {
         final ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage()
         );

@@ -2,8 +2,10 @@ package cinema.controller;
 
 import cinema.domains.Reservation;
 import cinema.domains.Seat;
+import cinema.domains.Token;
 import cinema.domains.dto.CinemaRoomDTO;
 import cinema.domains.dto.SeatDTO;
+import cinema.exceptions.WrongTokenException;
 import cinema.service.CinemaService;
 import cinema.utils.Mapper;
 import cinema.exceptions.SeatDoesNotExistException;
@@ -13,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 public class CinemaController {
@@ -34,6 +39,11 @@ public class CinemaController {
     @PostMapping("/purchase")
     public ResponseEntity<Reservation> purchaseSeat(@RequestBody Seat seat) throws Exception {
         return new ResponseEntity<>(cinemaService.purchaseSeat(seat), HttpStatus.OK);
+    }
+
+    @PostMapping("/return")
+    public ResponseEntity<Map<String, SeatDTO>> returnTicket(@RequestBody Token token) throws WrongTokenException {
+        return new ResponseEntity<>(cinemaService.returnTicket(token), HttpStatus.OK);
     }
 
 }
