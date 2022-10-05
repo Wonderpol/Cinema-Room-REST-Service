@@ -14,26 +14,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = {SeatDoesNotExistException.class})
+    @ExceptionHandler(value =
+            {
+                    SeatDoesNotExistException.class,
+                    TicketAlreadyPurchasedException.class,
+                    WrongTokenException.class
+            })
     public ResponseEntity<ErrorResponse> seatDoesNotExistExceptionHandler(Exception ex) {
-        final ErrorResponse errorResponse = new ErrorResponse(
-                ex.getMessage()
-        );
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = {TicketAlreadyPurchasedException.class})
-    public ResponseEntity<ErrorResponse> ticketAlreadyPurchasedException(Exception ex) {
-        final ErrorResponse errorResponse = new ErrorResponse(
-                ex.getMessage()
-        );
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = {WrongTokenException.class})
-    public ResponseEntity<ErrorResponse> wrongTokenException(Exception ex) {
         final ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage()
         );
