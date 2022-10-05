@@ -1,17 +1,18 @@
-package cinema.domains.response;
+package cinema.domains;
 
 import cinema.domains.dto.SeatDTO;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.Setter;
 
 import java.util.UUID;
 
-@AllArgsConstructor
 @NoArgsConstructor
-public class TicketPurchaseResponse {
-    @NonNull
+@AllArgsConstructor
+@Getter
+@Setter
+public class Reservation {
     private UUID token;
-    @NonNull
-    private SeatDTO ticket;
+    private SeatDTO seat;
 }

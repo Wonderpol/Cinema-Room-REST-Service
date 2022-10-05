@@ -1,5 +1,6 @@
 package cinema.controller;
 
+import cinema.domains.Reservation;
 import cinema.domains.Seat;
 import cinema.domains.dto.CinemaRoomDTO;
 import cinema.domains.dto.SeatDTO;
@@ -31,7 +32,7 @@ public class CinemaController {
     }
 
     @PostMapping("/purchase")
-    public ResponseEntity<SeatDTO> purchaseSeat(@RequestBody Seat seat) throws Exception {
+    public ResponseEntity<Reservation> purchaseSeat(@RequestBody Seat seat) throws Exception {
         return new ResponseEntity<>(cinemaService.purchaseSeat(seat), HttpStatus.OK);
     }
 

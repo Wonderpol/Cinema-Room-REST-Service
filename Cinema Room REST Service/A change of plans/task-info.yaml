@@ -626,10 +626,7 @@ files:
         private String error;
     }
   learner_created: true
-- name: src/cinema/domains/response/TicketPurchaseResponse.java
-  visible: true
-  learner_created: true
-- name: src/cinema/exceptions/ExceptionsEnum.java
+- name: src/cinema/domains/Reservation.java
   visible: true
   learner_created: true
 feedback_link: https://hyperskill.org/learn/step/13377#comment

@@ -1,6 +1,7 @@
 package cinema.service;
 
 import cinema.domains.CinemaRoom;
+import cinema.domains.Reservation;
 import cinema.domains.Seat;
 import cinema.domains.dto.SeatDTO;
 import cinema.repository.CinemaRepository;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import cinema.utils.Mapper;
 
 import java.util.stream.Collectors;
-
 
 @Service
 public class CinemaService {
@@ -33,7 +33,7 @@ public class CinemaService {
         );
     }
 
-    public SeatDTO purchaseSeat(Seat seat) throws TicketAlreadyPurchasedException, SeatDoesNotExistException {
+    public Reservation purchaseSeat(Seat seat) throws TicketAlreadyPurchasedException, SeatDoesNotExistException {
 
         if (ifSeatDoesNotExists(seat)) {
             throw new SeatDoesNotExistException("The number of a row or a column is out of bounds!");
@@ -50,7 +50,7 @@ public class CinemaService {
 
         bookedSeat.setAvailable(false);
 
-        return mapper.toDto(bookedSeat);
+        return cinemaRepository.saveReservation(mapper.toDto(bookedSeat));
     }
 
     private boolean ifSeatDoesNotExists(Seat seat) {
